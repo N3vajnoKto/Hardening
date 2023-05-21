@@ -3,7 +3,7 @@
 
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), screen_(new Screen()), controller(new Controller(this)), timer(new QTimer(this))
+    : QMainWindow(parent), screen_(new Screen(this)), controller(new Controller(this)), timer(new QTimer(this))
 {
     setCentralWidget(screen_);
 
@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     screen_->setFocus(controller->player());
 
     controller->setScreen(screen_);
+    controller->buildHUD();
 
     Object* test = new Object();
 
@@ -32,9 +33,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     test1->setPos(QPointF(180, 180) );
     controller->addObject(test1);
-    setMouseTracking(true);
 
 }
+
 
 void MainWindow::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_W) {
@@ -51,6 +52,42 @@ void MainWindow::keyPressEvent(QKeyEvent* event) {
 
     if (event->key() == Qt::Key_D) {
         controller->movePlayer(Keys::KeyD);
+    }
+
+    if (event->key() == Qt::Key_Escape) {
+        controller->openInventory();
+    }
+
+    if (event->key() == Qt::Key_1) {
+        controller->makeCurrentCell(0);
+    }
+
+    if (event->key() == Qt::Key_2) {
+        controller->makeCurrentCell(1);
+    }
+    if (event->key() == Qt::Key_3) {
+        controller->makeCurrentCell(2);
+    }
+    if (event->key() == Qt::Key_4) {
+        controller->makeCurrentCell(3);
+    }
+    if (event->key() == Qt::Key_5) {
+        controller->makeCurrentCell(4);
+    }
+    if (event->key() == Qt::Key_6) {
+        controller->makeCurrentCell(5);
+    }
+    if (event->key() == Qt::Key_7) {
+        controller->makeCurrentCell(6);
+    }
+    if (event->key() == Qt::Key_8) {
+        controller->makeCurrentCell(7);
+    }
+    if (event->key() == Qt::Key_9) {
+        controller->makeCurrentCell(8);
+    }
+    if (event->key() == Qt::Key_0) {
+        controller->makeCurrentCell(9);
     }
 }
 

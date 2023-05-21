@@ -3,6 +3,7 @@
 #define PLAYER_H
 
 #include "object.h"
+#include "inventory.h"
 
 class Player : public Object
 {
@@ -16,10 +17,12 @@ public:
     void live() override;
     void interactWithObject(Object*) override;
     bool ableToMove = true;
+    Inventory* inventory();
 private:
     QPointF playerMovement_;
     QPointF playerDirection_;
     double playerSpeed_ = 7;
+    Inventory* inventory_;
 
 };
 

@@ -1,9 +1,13 @@
 
 #include "player.h"
 
-Player::Player(QObject* parent) : Object(parent), playerMovement_{0, 0}
+Player::Player(QObject* parent) : Object(parent), playerMovement_{0, 0}, inventory_(new Inventory(30, 10, this))
 {
     setMovePrior(-1);
+}
+
+Inventory* Player::inventory() {
+    return inventory_;
 }
 
 QPointF& Player::playerMovement(QPointF move) {
@@ -36,6 +40,7 @@ QPointF& Player::playerDirection(QPointF move) {
 
 void Player::setPlayerDirection(QPointF dir) {
     playerDirection_ = normalize(dir);
+    qDebug() << playerDirection_ << '\n';
 }
 
 void Player::interactWithObject(Object* obj) {

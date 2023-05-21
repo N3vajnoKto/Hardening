@@ -30,6 +30,15 @@ set(PROJECT_SOURCES
         player.h
         player.cpp
 
+        inventory.h
+        inventory.cpp
+
+        item.h
+        item.cpp
+
+        cell.h
+        cell.cpp
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

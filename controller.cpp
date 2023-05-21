@@ -7,7 +7,6 @@ Controller::Controller(QObject* parent) : QObject(parent), player_(new Player(th
 }
 
 void Controller::deleteObject(Object* obj) {
-    qDebug() << 1;
     objectTrash_.insert(obj);
 }
 
@@ -114,6 +113,35 @@ Screen* Controller::screen() {
 
 void Controller::setScreen(Screen* scr) {
     screen_ = scr;
+}
+
+bool Controller::inventoryOpened() const {
+    return inventoryOpened_;
+
+}
+
+void Controller::openInventory() {
+    for (int i = player()->inventory()->row(); i < player()->inventory()->cells().size(); ++i) {
+        if (inventoryOpened()) {
+            screen()->hud()->removeItem(player()->inventory()->at(i));
+        } else {
+            screen()->hud()->addItem(player()->inventory()->at(i));
+        }
+    }
+
+    inventoryOpened_ ^= true;
+
+}
+
+void Controller::makeCurrentCell(int ind) {
+    if (ind < 0 || ind >= player()->inventory()->row()) return;
+    player()->inventory()->makeCurrent(player()->inventory()->at(ind));
+}
+
+void Controller::buildHUD() {
+    for (int i = 0; i < player()->inventory()->row(); ++i) {
+        screen()->hud()->addItem(player()->inventory()->at(i));
+    }
 }
 
 void Controller::clearTrash() {

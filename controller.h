@@ -13,7 +13,8 @@ enum class Keys{
     KeyW,
     KeyS,
     KeyA,
-    KeyD
+    KeyD,
+    KeyEsc
 
 };
 
@@ -32,6 +33,9 @@ public:
     Screen* screen();
     void setScreen(Screen* scr);
     void clearTrash();
+    bool inventoryOpened() const;
+    void buildHUD();
+    void makeCurrentCell(int ind);
 private:
     std::set<Object*> objects_;
     std::set<Object*> objectTrash_;
@@ -39,10 +43,12 @@ private:
     QTimer* timer;
     Object* focusOn_;
     Screen* screen_ = nullptr;
+    bool inventoryOpened_ = false;
 
 public slots:
     void update();
     void updatePlayerDiraction(QPointF dir);
+    void openInventory();
 
 signals:
     void objectAdded(Object* obj);

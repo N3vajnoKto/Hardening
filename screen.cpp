@@ -1,32 +1,63 @@
 
 #include "screen.h"
 
-#include <QGridLayout>
 #include "object.h"
+#include <QGridLayout>
 
-Screen::Screen(QGraphicsScene *parent)
-    : QGraphicsView{parent}, scene(new QGraphicsScene(this))
+Screen::Screen(QWidget *parent)
+    : QWidget{parent}, scene_(new QGraphicsScene(this)), sceneView_(new QGraphicsView(scene_, this)),
+    hud_(new QGraphicsScene(this)), hudView_(new QGraphicsView(hud_, this))
 {
-    setScene(scene);
-    setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    setSceneRect(-sceneWidth, -sceneHeight, 2 * sceneWidth, 2 * sceneHeight);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setDragMode(QGraphicsView::NoDrag);
-    setFocusPolicy(Qt::NoFocus);
+    sceneView_->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    sceneView_->setSceneRect(-sceneWidth, -sceneHeight, 2 * sceneWidth, 2 * sceneHeight);
+    sceneView_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    sceneView_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    sceneView_->setDragMode(QGraphicsView::NoDrag);
+    sceneView_->setFocusPolicy(Qt::NoFocus);
+
+    hudView_->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    hudView_->setSceneRect(QRect(0, 0, width(), height()));
+    hudView_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    hudView_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    hudView_->setDragMode(QGraphicsView::NoDrag);
+    hudView_->setFocusPolicy(Qt::NoFocus);
+
+    QGridLayout* lay = new QGridLayout();
+
+    lay->setContentsMargins(QMargins(0,0,0,0));
+    lay->addWidget(sceneView_);
+    setLayout(lay);
+    sceneView_->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+    QPalette pal = hudView_->palette();
+    pal.setColor(QPalette::Base, Qt::transparent);
+    hudView_->setAutoFillBackground(true);
+    hudView_->setPalette(pal);
+
     setMouseTracking(true);
+
+}
+
+void Screen::resizeEvent(QResizeEvent *event) {
+    hudView_->resize(event->size().width(), event->size().height());
+    hudView_->setSceneRect(QRect(0, 0, event->size().width() - 2, event->size().height() - 2));
+}
+
+QGraphicsScene* Screen::hud() {
+    return hud_;
 }
 
 void Screen::addObject(Object* obj) {
-    scene->addItem(obj);
+    scene_->addItem(obj);
 }
 
 void Screen::updateScreen() {
-    update();
+    sceneView_->update();
+    hudView_->update();
 }
 
 void Screen::setFocus(Object* obj) {
-    centerOn(obj);
+    sceneView_->centerOn(obj);
 }
 
 void Screen::mouseMoveEvent(QMouseEvent *event) {
@@ -38,7 +69,5 @@ void Screen::mouseMoveEvent(QMouseEvent *event) {
 
 QList<QGraphicsItem*> Screen::objectsNear(QGraphicsItem* it, QRectF rect) {
     QRectF search = QRectF(it->pos() - QPointF(rect.width(), rect.height()) * 0.5, rect.size());
-    auto lst = scene->items(search);
-    return scene->items(search);
+    return scene_->items(search);
 }
-

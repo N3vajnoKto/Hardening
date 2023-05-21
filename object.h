@@ -5,7 +5,6 @@
 #include <QRectF>
 #include <QGraphicsItem>
 #include <QPainter>
-#include "circle.h"
 
 namespace Move{
     const QPointF forward{0, -1};

@@ -6,18 +6,20 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QMouseEvent>
+#include <QResizeEvent>
 #include "object.h"
 #include <QList>
 
-class Screen : public QGraphicsView
+class Screen : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Screen(QGraphicsScene *parent = nullptr);
-    QGraphicsScene* scene;
+    explicit Screen(QWidget *parent = nullptr);
     void setFocus(Object* obj);
     void mouseMoveEvent(QMouseEvent *event) override;
     QList<QGraphicsItem*> objectsNear(QGraphicsItem* it, QRectF rect);
+    QGraphicsScene* hud();
+    void resizeEvent(QResizeEvent *event) override;
 
 public slots:
     void addObject(Object* obj);
@@ -26,6 +28,10 @@ signals:
     void mouseMoved(QPointF);
 
 private:
+    QGraphicsScene* scene_;
+    QGraphicsScene* hud_;
+    QGraphicsView* sceneView_;
+    QGraphicsView* hudView_;
     const int sceneWidth = 1000000;
     const int sceneHeight = 1000000;
 
