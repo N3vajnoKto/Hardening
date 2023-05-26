@@ -9,8 +9,8 @@ class Player : public Object
 {
 public:
     Player(QObject* parent = nullptr);
-    QPointF& playerMovement(QPointF move);
-    QPointF& playerDirection(QPointF move);
+    QPointF& playerMovement();
+    QPointF& playerDirection();
     void addPlayerMovement(QPointF move);
     void setPlayerDirection(QPointF move);
     QPointF normalize(QPointF dir);

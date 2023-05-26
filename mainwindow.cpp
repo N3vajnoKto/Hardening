@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(timer, &QTimer::timeout, controller, &Controller::update);
     connect(timer, &QTimer::timeout, this, &MainWindow::focusScreen);
-    connect(screen_, &Screen::mouseMoved, controller, &Controller::updatePlayerDiraction);
+    connect(screen_, &Screen::mouseMoved, controller, &Controller::updateMouse);
     timer->start(16);
 
     screen_->addObject(controller->player());

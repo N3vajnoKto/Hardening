@@ -1,8 +1,8 @@
 
 #include "cell.h"
 
-Cell::Cell(QRectF sz, QObject *parent)
-    : QObject{parent}, QGraphicsItem()
+Cell::Cell(Item* item, QRectF sz, QObject *parent)
+    : QObject{parent}, QGraphicsItem(), item_(item)
 {
     box_ = sz;
 }
@@ -12,7 +12,7 @@ QRectF& Cell::box() {
 }
 
 QRectF Cell::boundingRect() const {
-    return box_;
+    return QRectF(box_.x() - 2, box_.y() - 2, box_.width() + 5, box_.height() + 5);
 }
 
 void Cell::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
@@ -25,6 +25,12 @@ void Cell::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         painter->setBrush(QColor(250, 250, 250, 200));
     }
     painter->drawRect(box());
+
+    if (item() != nullptr) {
+        int width = box().width() - 3;
+        int height = box().height() - 3;
+        painter->drawPixmap(1, 1, item()->pixmap(width, height));
+    }
 
     painter->restore();
 }

@@ -39,6 +39,24 @@ set(PROJECT_SOURCES
         cell.h
         cell.cpp
 
+        tool.h
+        tool.cpp
+
+        toolaxe.h
+        toolaxe.cpp
+
+        objectaxe.h
+        objectaxe.cpp
+
+        toolobject.h
+        toolobject.cpp
+
+        keys.h
+
+        items.h
+
+        icons.qrc
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

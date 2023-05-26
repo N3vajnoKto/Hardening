@@ -11,7 +11,7 @@ class Cell : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
-    explicit Cell(QRectF sz, QObject *parent = nullptr);
+    explicit Cell(Item* item = nullptr, QRectF sz  = {0, 0, 30, 30}, QObject *parent = nullptr);
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -21,9 +21,10 @@ public:
     bool current() const;
     void setCurrent(bool st);
 
+
 private:
     QRectF box_;
-    Item* item_;
+    Item* item_ = nullptr;
     bool current_ = false;
 
 signals:

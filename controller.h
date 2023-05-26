@@ -8,15 +8,8 @@
 #include "object.h"
 #include "player.h"
 #include "screen.h"
-
-enum class Keys{
-    KeyW,
-    KeyS,
-    KeyA,
-    KeyD,
-    KeyEsc
-
-};
+#include "items.h"
+#include "keys.h"
 
 class Controller : public QObject
 {
@@ -36,6 +29,11 @@ public:
     bool inventoryOpened() const;
     void buildHUD();
     void makeCurrentCell(int ind);
+    void makeCurrentCell(Cell* ind);
+    void updatePlayerDiraction(QPoint dir);
+    void updatePicked(QPointF pos);
+    void connectUsingItem(Item* item);
+    void updateReleaseButton(Keys key);
 private:
     std::set<Object*> objects_;
     std::set<Object*> objectTrash_;
@@ -44,10 +42,14 @@ private:
     Object* focusOn_;
     Screen* screen_ = nullptr;
     bool inventoryOpened_ = false;
+    Keys lastKey;
+    QPointF lastPress;
 
 public slots:
+    void updateClickHUD(QGraphicsItem* item, Keys key);
+    void updateSceneClicked(QPointF pos, Keys key);
     void update();
-    void updatePlayerDiraction(QPointF dir);
+    void updateMouse(QPoint pos);
     void openInventory();
 
 signals:

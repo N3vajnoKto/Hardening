@@ -15,6 +15,7 @@ Screen::Screen(QWidget *parent)
     sceneView_->setDragMode(QGraphicsView::NoDrag);
     sceneView_->setFocusPolicy(Qt::NoFocus);
 
+
     hudView_->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     hudView_->setSceneRect(QRect(0, 0, width(), height()));
     hudView_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -28,6 +29,7 @@ Screen::Screen(QWidget *parent)
     lay->addWidget(sceneView_);
     setLayout(lay);
     sceneView_->setAttribute(Qt::WA_TransparentForMouseEvents);
+    hudView_->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     QPalette pal = hudView_->palette();
     pal.setColor(QPalette::Base, Qt::transparent);
@@ -38,13 +40,66 @@ Screen::Screen(QWidget *parent)
 
 }
 
+QPoint Screen::mouseCoord() const {
+    return mouseCoord_;
+}
+
 void Screen::resizeEvent(QResizeEvent *event) {
     hudView_->resize(event->size().width(), event->size().height());
     hudView_->setSceneRect(QRect(0, 0, event->size().width() - 2, event->size().height() - 2));
 }
 
+void Screen::mouseMoveEvent(QMouseEvent *event) {
+    mouseCoord_ = event->pos();
+    emit mouseMoved(event->pos());
+}
+
+void Screen::mousePressEvent(QMouseEvent* event) {
+    mouseCoord_ = event->pos();
+    QGraphicsItem* item = hudView_->itemAt(event->pos());
+    if (item != nullptr) {
+        if (event->button() == Qt::LeftButton) {
+            emit hudClicked(item, Keys::leftMouseButton);
+        }
+        if (event->button() == Qt::RightButton) {
+            emit hudClicked(item, Keys::rightMouseButton);
+        }
+
+        return;
+    } else {
+        if (event->button() == Qt::LeftButton) {
+            emit sceneClicked(sceneView()->mapToScene(event->pos()), Keys::leftMouseButton);
+        }
+        if (event->button() == Qt::RightButton) {
+            emit sceneClicked(sceneView()->mapToScene(event->pos()), Keys::rightMouseButton);
+        }
+
+        return;
+    }
+}
+
+void Screen::mouseReleaseEvent(QMouseEvent* event) {
+    if (event->button() == Qt::LeftButton) {
+        emit released(Keys::leftMouseButton);
+    }
+    if (event->button() == Qt::RightButton) {
+        emit released(Keys::rightMouseButton);
+    }
+}
+
 QGraphicsScene* Screen::hud() {
     return hud_;
+}
+
+QGraphicsScene* Screen::scene() {
+    return scene_;
+}
+
+QGraphicsView* Screen::hudView() {
+    return hudView_;
+}
+QGraphicsView* Screen::sceneView() {
+    return sceneView_;
 }
 
 void Screen::addObject(Object* obj) {
@@ -60,12 +115,6 @@ void Screen::setFocus(Object* obj) {
     sceneView_->centerOn(obj);
 }
 
-void Screen::mouseMoveEvent(QMouseEvent *event) {
-    QPointF dir = event->pos();
-    dir.rx() -= width() / 2;
-    dir.ry() -= height() / 2;
-    emit mouseMoved(dir);
-}
 
 QList<QGraphicsItem*> Screen::objectsNear(QGraphicsItem* it, QRectF rect) {
     QRectF search = QRectF(it->pos() - QPointF(rect.width(), rect.height()) * 0.5, rect.size());

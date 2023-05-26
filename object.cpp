@@ -6,6 +6,13 @@ Object::Object(QObject* parent) : QObject(parent), QGraphicsItem()
     box_ = {-40, -40, 80, 80};
     body_ = {{-20, -20}, {20, -20}, {0, 20}};
     hitbox_ = {{-20, -40}, {20, -40}, {20, 20}, {-20, 20}};
+    double angle = 0;
+
+    for (int i = 0; i < 8; ++i) {
+        useArea_.push_back({50 * cos(angle), 50 * sin(angle)});
+        angle += 2 * M_PI / 8;
+    }
+
     speed_ = {0, 0};
     health_ = 100;
     direct_ = {0, 0};
@@ -69,6 +76,10 @@ std::vector<QPointF>& Object::body() {
     return body_;
 }
 
+std::vector<QPointF>& Object::useArea() {
+    return useArea_;
+}
+
 QRectF Object::boundingRect() const {
 
     return box_;
@@ -96,11 +107,13 @@ void Object::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     painter->setPen(QPen(Qt::green, 2));
     painter->drawPath(path(hitbox()));
 
+    painter->setPen(QPen(Qt::red, 2));
+    painter->drawPath(path(useArea()));
+
     painter->restore();
 }
 
 void Object::live() {
-    if (!enabled) return;
     move(speed());
 }
 
@@ -110,6 +123,13 @@ void Object::setSolid(bool bl) {
 
 bool Object::isSolid() const {
     return solid;
+}
+
+void Object::setInteractive(bool bl) {
+    interactive_ = bl;
+}
+bool Object::isInteractive() const {
+    return interactive_;
 }
 
 QPointF Object::directionToObject(Object* obj) const{
@@ -154,6 +174,13 @@ void Object::rotate(double ang) {
     }
 
     for (auto& to : body_){
+        double x = to.x();
+        double y = to.y();
+        to.rx() = x * cos(ang) + y * sin(ang);
+        to.ry() = -x * sin(ang) + y * cos(ang);
+    }
+
+    for (auto& to : useArea_){
         double x = to.x();
         double y = to.y();
         to.rx() = x * cos(ang) + y * sin(ang);

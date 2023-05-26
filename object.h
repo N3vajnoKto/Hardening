@@ -26,6 +26,7 @@ public:
     QPointF& direct();
     std::vector<QPointF>& body();
     std::vector<QPointF>& hitbox();
+    std::vector<QPointF>& useArea();
     QPainterPath path(const std::vector<QPointF>& vec) const;
     QPainterPath scenePath(const std::vector<QPointF>& vec) const;
     void move(QPointF move);
@@ -33,6 +34,8 @@ public:
     void addDirect(QPointF move);
     void setSolid(bool bl);
     bool isSolid() const;
+    void setInteractive(bool bl);
+    bool isInteractive() const;
     QPointF directionToObject(Object* obj) const;
     double dist(QPointF) const;
     double dist(Object* obj) const;
@@ -57,11 +60,12 @@ private:
     QRectF box_;
     std::vector<QPointF> body_;
     std::vector<QPointF> hitbox_;
+    std::vector<QPointF> useArea_;
     double health_;
     QPointF speed_;
     QPointF direct_;
     int movePrior_ = 0;
-    bool enabled = true;
+    bool interactive_ = true;
     bool solid = true;
     QPointF prevPos_ = {0, 0};
 

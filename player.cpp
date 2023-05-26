@@ -10,7 +10,7 @@ Inventory* Player::inventory() {
     return inventory_;
 }
 
-QPointF& Player::playerMovement(QPointF move) {
+QPointF& Player::playerMovement() {
     return playerMovement_;
 }
 
@@ -34,13 +34,12 @@ void Player::live() {
     }
 }
 
-QPointF& Player::playerDirection(QPointF move) {
+QPointF& Player::playerDirection() {
     return playerDirection_;
 }
 
 void Player::setPlayerDirection(QPointF dir) {
     playerDirection_ = normalize(dir);
-    qDebug() << playerDirection_ << '\n';
 }
 
 void Player::interactWithObject(Object* obj) {
