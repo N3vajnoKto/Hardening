@@ -7,7 +7,7 @@
 #include <QGraphicsScene>
 #include <QMouseEvent>
 #include <QResizeEvent>
-#include "object.h"
+#include "objects/objectbase.h"
 #include "keys.h"
 #include <QList>
 
@@ -16,7 +16,7 @@ class Screen : public QWidget
     Q_OBJECT
 public:
     explicit Screen(QWidget *parent = nullptr);
-    void setFocus(Object* obj);
+    void setFocus(ObjectBase* obj);
     QList<QGraphicsItem*> objectsNear(QGraphicsItem* it, QRectF rect);
     QGraphicsScene* hud();
     QGraphicsScene* scene();
@@ -39,7 +39,7 @@ private:
     QPoint mouseCoord_;
 
 public slots:
-    void addObject(Object* obj);
+    void addObject(ObjectBase* obj);
     void updateScreen();
 
 signals:

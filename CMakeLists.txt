@@ -18,8 +18,11 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
 
-        object.h
-        object.cpp
+        objects/objectbase.h
+        objects/objectbase.cpp
+
+        objects/object.h
+        objects/object.cpp
 
         screen.h
         screen.cpp
@@ -27,33 +30,70 @@ set(PROJECT_SOURCES
         controller.h
         controller.cpp
 
+        playerbase.h
+        playerbase.cpp
+
         player.h
         player.cpp
 
         inventory.h
         inventory.cpp
 
-        item.h
-        item.cpp
+        items/itembase.h
+        items/itembase.cpp
+
+        items/item.h
+        items/item.cpp
 
         cell.h
         cell.cpp
 
-        tool.h
-        tool.cpp
+        items/tool.h
+        items/tool.cpp
 
-        toolaxe.h
-        toolaxe.cpp
+        items/toolaxe.h
+        items/toolaxe.cpp
 
-        objectaxe.h
-        objectaxe.cpp
+        objects/objectaxe.h
+        objects/objectaxe.cpp
 
-        toolobject.h
-        toolobject.cpp
+        objects/toolobject.h
+        objects/toolobject.cpp
+
+        objects/droppeditemobject.h
+        objects/droppeditemobject.cpp
+
+        items/itemgroup.h
+        items/itemgroup.cpp
+
+        objects/lootableobject.h
+        objects/lootableobject.cpp
+
+        objects/tree.h
+        objects/tree.cpp
 
         keys.h
 
         items.h
+        objects.h
+
+        damage.h
+        damage.cpp
+
+        items/itemwood.h
+        items/itemwood.cpp
+
+        objects/stone.h
+        objects/stone.cpp
+
+        items/itemstone.h
+        items/itemstone.cpp
+
+        items/toolpickaxe.h
+        items/toolpickaxe.cpp
+
+        objects/objectpickaxe.h
+        objects/objectpickaxe.cpp
 
         icons.qrc
 

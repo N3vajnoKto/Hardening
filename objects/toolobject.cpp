@@ -8,13 +8,6 @@ ToolObject::ToolObject(QObject* parent) : Object(parent)
 
 }
 
-QTimer* ToolObject::timer() {
-    return timer_;
-}
-void ToolObject::setTimer(QTimer* timer) {
-    timer_ = timer;
-}
-
 void ToolObject::setPlayer(Player* player) {
     player_ = player;
 }

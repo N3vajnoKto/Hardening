@@ -1,7 +1,6 @@
 
 #include "screen.h"
 
-#include "object.h"
 #include <QGridLayout>
 
 Screen::Screen(QWidget *parent)
@@ -102,7 +101,7 @@ QGraphicsView* Screen::sceneView() {
     return sceneView_;
 }
 
-void Screen::addObject(Object* obj) {
+void Screen::addObject(ObjectBase* obj) {
     scene_->addItem(obj);
 }
 
@@ -111,7 +110,7 @@ void Screen::updateScreen() {
     hudView_->update();
 }
 
-void Screen::setFocus(Object* obj) {
+void Screen::setFocus(ObjectBase* obj) {
     sceneView_->centerOn(obj);
 }
 

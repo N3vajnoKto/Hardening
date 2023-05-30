@@ -6,27 +6,18 @@ Tool::Tool(QObject* parent) : Item(parent)
     setAutouse(true);
 }
 
-double Tool::axeDamage() {
-    return axeDamage_;
-}
-void Tool::setAxeDamage(double damage) {
-    axeDamage_ = damage;
-}
-
-double Tool::pickaxeDamage() {
-    return pickaxeDamage_;
+Tool::Tool(const Tool* tool) : Item(tool) {
+    damage_ = tool->damage_;
+    useRadius_ = tool->useRadius_;
+    usable_ = tool->usable_;
+    reload_ = tool->reload_;
 }
 
-void Tool::setPickaxeDamage(double damage) {
-    pickaxeDamage_ = damage;
+Damage Tool::damage() const {
+    return damage_;
 }
-
-double Tool::swordDamage() {
-    return swordDamage_;
-}
-
-void Tool::setSwordDamage(double damage) {
-    swordDamage_ = damage;
+void Tool::setDamage(Damage damage) {
+    damage_ = damage;
 }
 
 double Tool::useRadius() {
@@ -35,13 +26,6 @@ double Tool::useRadius() {
 
 void Tool::setUseRadius(double rad) {
     useRadius_ = rad;
-}
-
-Player* Tool::player() {
-    return player_;
-}
-void Tool::setPlayer(Player* player) {
-    player_ = player;
 }
 
 int Tool::reload() {
@@ -67,6 +51,10 @@ void Tool::startReload(int msec) {
 
 void Tool::finishReload() {
     setUsable(true);
+}
+
+ItemBase* Tool::copy() const {
+    return new Tool(this);
 }
 
 bool Tool::useItem(QPointF pos) {

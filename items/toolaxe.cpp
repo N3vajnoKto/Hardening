@@ -1,16 +1,23 @@
 
 #include "toolaxe.h"
-#include "objectaxe.h"
+#include "../objects/objectaxe.h"
 
 ToolAxe::ToolAxe(QObject *parent)
     : Tool{parent}
 {
     setId("simpleAxe");
-    setMaxNumber(1);
-    setAxeDamage(10);
-    setSwordDamage(3);
+    setDamage(Damage(10, 0, 3));
     setIcon(QIcon(":/icons/axe.png"));
     setUseRadius(200);
+    setDisposable(false);
+}
+
+ToolAxe::ToolAxe(const ToolAxe *parent) : Tool{parent} {
+    this->turn = parent->turn;
+}
+
+ItemBase* ToolAxe::copy() const {
+    return new ToolAxe(this);
 }
 
 bool ToolAxe::useItem(QPointF pos) {
@@ -28,6 +35,7 @@ bool ToolAxe::useItem(QPointF pos) {
         axe->rotate(ang);
 
         axe->setPos(player()->pos() + axe->dir_ * 100);
+        axe->setDamage(damage());
         emit addObject(axe);
         startReload(reload());
 

@@ -11,15 +11,6 @@ Inventory::Inventory(int sz, int row, QObject *parent)
         cells_[i] = new Cell(nullptr, cellSize, this);
     }
 
-    Item* item1 = new Item(this);
-    item1->setCount(10);
-
-    Item* item2 = new Item(this);
-    item2->setCount(14);
-
-    addItem(item1);
-    addItem(item2);
-
     rebuild();
 }
 
@@ -38,22 +29,32 @@ void Inventory::rebuild() {
 
 }
 
-bool Inventory::addItem(Item* item) {
+bool Inventory::addItem(ItemGroup* item) {
+    emit itemAdded(item->item());
     for (auto* to : cells_) {
-        if (to->item() == nullptr) {
-            to->setItem(item);
-            return true;
+        if (to->item() != nullptr){
+            to->item()->addItemGroup(item);
+            if (item->count() == 0) return true;
+        }
+    }
+
+    if (item->count() != 0) {
+        for (auto* to : cells_) {
+            if (to->item() == nullptr) {
+                to->setItem(item);
+                return true;
+            }
         }
     }
 
     return false;
 }
 
-Item* Inventory::picked() {
+ItemGroup* Inventory::picked() {
     return picked_;
 }
 
-void Inventory::setPicked(Item* cell) {
+void Inventory::setPicked(ItemGroup* cell) {
     picked_ = cell;
 }
 

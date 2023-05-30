@@ -4,8 +4,8 @@
 
 
 #include "toolobject.h"
-#include "player.h"
-#include <QTimer>
+#include "../player.h"
+#include <set>
 
 class ObjectAxe : public ToolObject
 {
@@ -14,7 +14,10 @@ public:
     QPointF dir_ = {0, 0};
     void live() override;
     void setAngle(double ang);
+    void interactWithObject(Object *obj) override;
+    void interactWithObject(ObjectBase *obj) override;
 private:
+    std::set<ObjectBase*> damaged;
     double ang_ = 0.1;
 };
 

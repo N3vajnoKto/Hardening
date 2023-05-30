@@ -1,7 +1,7 @@
 
-#include "object.h"
+#include "objectbase.h"
 #include <QPainterPath>
-Object::Object(QObject* parent) : QObject(parent), QGraphicsItem()
+ObjectBase::ObjectBase(QObject* parent) : QObject(parent), QGraphicsItem()
 {
     box_ = {-40, -40, 80, 80};
     body_ = {{-20, -20}, {20, -20}, {0, 20}};
@@ -20,23 +20,20 @@ Object::Object(QObject* parent) : QObject(parent), QGraphicsItem()
 
 }
 
-QPainterPath Object::shape() const {
-    QPainterPath path(body_.at(0));
-    for (int i = 1; i < body_.size(); ++i) {
-        path.lineTo(body_.at(i));
+void ObjectBase::getDamage(Damage damage) {
+    if (isImortal()) return;
+    health() -= damage.swordDamage();
+    if (health() <= 0) {
+        die();
     }
-
-    path.closeSubpath();
-
-    return path;
 }
 
 
-std::vector<QPointF>& Object::hitbox() {
+std::vector<QPointF>& ObjectBase::hitbox() {
     return hitbox_;
 }
 
-QPainterPath Object::path(const std::vector<QPointF>& vec) const {
+QPainterPath ObjectBase::path(const std::vector<QPointF>& vec) const {
     QPainterPath path(vec.at(0));
     for (int i = 1; i < vec.size(); ++i) {
         path.lineTo(vec.at(i));
@@ -47,7 +44,7 @@ QPainterPath Object::path(const std::vector<QPointF>& vec) const {
     return path;
 }
 
-QPainterPath Object::scenePath(const std::vector<QPointF>& vec) const {
+QPainterPath ObjectBase::scenePath(const std::vector<QPointF>& vec) const {
     QPainterPath path(vec.at(0) + pos());
     for (int i = 1; i < vec.size(); ++i) {
         path.lineTo(vec.at(i) + pos());
@@ -58,52 +55,52 @@ QPainterPath Object::scenePath(const std::vector<QPointF>& vec) const {
     return path;
 }
 
-QRectF& Object::box() {
+QRectF& ObjectBase::box() {
     return box_;
 }
-QPointF& Object::speed() {
+QPointF& ObjectBase::speed() {
     return speed_;
 }
-QPointF& Object::direct() {
+QPointF& ObjectBase::direct() {
     return direct_;
 }
 
-double& Object::health() {
+double& ObjectBase::health() {
     return health_;
 }
 
-std::vector<QPointF>& Object::body() {
+std::vector<QPointF>& ObjectBase::body() {
     return body_;
 }
 
-std::vector<QPointF>& Object::useArea() {
+std::vector<QPointF>& ObjectBase::useArea() {
     return useArea_;
 }
 
-QRectF Object::boundingRect() const {
+QRectF ObjectBase::boundingRect() const {
 
     return box_;
 }
 
-void Object::move(QPointF move) {
+void ObjectBase::move(QPointF move) {
     setPos(pos() + move);
 }
 
-void Object::addSpeed(QPointF move) {
+void ObjectBase::addSpeed(QPointF move) {
     speed_ += move;
 }
 
-void Object::addDirect(QPointF move) {
+void ObjectBase::addDirect(QPointF move) {
     direct_ += move;
 }
 
-void Object::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+void ObjectBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
     painter->save();
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
     painter->setPen(QPen(Qt::black, 2));
-    painter->drawPath(shape());
+    painter->drawPath(path(body()));
     painter->setPen(QPen(Qt::green, 2));
     painter->drawPath(path(hitbox()));
 
@@ -113,46 +110,59 @@ void Object::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     painter->restore();
 }
 
-void Object::live() {
+void ObjectBase::live() {
     move(speed());
 }
 
-void Object::setSolid(bool bl) {
+void ObjectBase::die() {
+    destroyObject();
+}
+
+void ObjectBase::setSolid(bool bl) {
     solid = bl;
 }
 
-bool Object::isSolid() const {
+bool ObjectBase::isSolid() const {
     return solid;
 }
 
-void Object::setInteractive(bool bl) {
+bool ObjectBase::isImortal() const {
+    return imortal_;
+}
+
+void ObjectBase::setImortal(bool bl) {
+    imortal_ = bl;
+}
+
+void ObjectBase::setInteractive(bool bl) {
     interactive_ = bl;
 }
-bool Object::isInteractive() const {
+
+bool ObjectBase::isInteractive() const {
     return interactive_;
 }
 
-QPointF Object::directionToObject(Object* obj) const{
+QPointF ObjectBase::directionToObject(ObjectBase* obj) const{
     return obj->pos() - pos();
 }
 
-double Object::dist(QPointF dir) const {
+double ObjectBase::dist(QPointF dir) const {
     return sqrtl(dir.x() * dir.x() + dir.y() * dir.y());
 }
 
-double Object::dist(Object* obj) const{
+double ObjectBase::dist(ObjectBase* obj) const{
     return dist(directionToObject(obj));
 }
 
-int Object::movePrior() const {
+int ObjectBase::movePrior() const {
     return movePrior_;
 }
 
-void Object::setMovePrior(int prior) {
+void ObjectBase::setMovePrior(int prior) {
     movePrior_ = prior;
 }
 
-QPointF Object::normalize(QPointF dir) {
+QPointF ObjectBase::normalize(QPointF dir) {
     double len = sqrtl(dir.x() * dir.x() + dir.y() * dir.y());
     if (len == 0) return dir;
     dir.rx() /= len;
@@ -161,11 +171,11 @@ QPointF Object::normalize(QPointF dir) {
     return dir;
 }
 
-void Object::destroyObject() {
+void ObjectBase::destroyObject() {
     emit objectDestroyed(this);
 }
 
-void Object::rotate(double ang) {
+void ObjectBase::rotate(double ang) {
     for (auto& to : hitbox_){
         double x = to.x();
         double y = to.y();
@@ -189,8 +199,9 @@ void Object::rotate(double ang) {
 
 }
 
-void Object::interactWithObjectBody(Object* obj) {
-    if (collidesWithItem(obj)) {
+void ObjectBase::interactWithObjectBody(ObjectBase* obj) {
+    qDebug() << scenePath(body());
+    if (scenePath(body()).intersects(obj->scenePath(obj->body()))) {
         if (isSolid() && obj->isSolid() && movePrior() <= obj->movePrior()) {
             double l = 0;
             double r = std::max(box().width(), box().height());
@@ -198,7 +209,7 @@ void Object::interactWithObjectBody(Object* obj) {
             for (int i = 0; i < 5; ++i) {
                 double sr = (l + r) / 2;
                 move(sr * dir);
-                if (collidesWithItem(obj)) {
+                if (scenePath(body()).intersects(obj->scenePath(obj->body()))) {
                     l = sr;
                 } else {
                     r = sr;
@@ -211,7 +222,7 @@ void Object::interactWithObjectBody(Object* obj) {
     }
 }
 
-void Object::interactWithObject(Object* obj) {
+void ObjectBase::interactWithObject(ObjectBase* obj) {
 
 }
 

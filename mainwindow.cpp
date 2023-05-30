@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     resize(700, 600);
 
-    connect(controller, &Controller::objectAdded, screen_, &Screen::addObject);
     connect(controller, &Controller::updated, screen_, &Screen::updateScreen);
 
     connect(timer, &QTimer::timeout, controller, &Controller::update);
@@ -23,16 +22,18 @@ MainWindow::MainWindow(QWidget *parent)
     controller->setScreen(screen_);
     controller->buildHUD();
 
-    Object* test = new Object();
+    Tree* test = new Tree();
 
     test->setPos(QPointF(250, 250) );
     controller->addObject(test);
 
-    Object* test1 = new Object();
-    test1->rotate(0.5);
+    Stone* test1 = new Stone();
+//    test1->rotate(0.5);
 
-    test1->setPos(QPointF(180, 180) );
+    test1->setPos(QPointF(-100, 180) );
     controller->addObject(test1);
+
+    controller->generateWorld();
 
 }
 

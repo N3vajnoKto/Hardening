@@ -8,11 +8,12 @@
 
 class ToolAxe : public Tool
 {
-    Q_OBJECT
 public:
     explicit ToolAxe(QObject *parent = nullptr);
+    explicit ToolAxe(const ToolAxe *parent);
 
     bool useItem(QPointF pos) override;
+    ItemBase* copy() const override;
 
 private:
     bool turn = true;

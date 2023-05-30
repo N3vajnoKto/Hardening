@@ -5,45 +5,65 @@
 #include <set>
 #include <QKeyEvent>
 #include <QTimer>
-#include "object.h"
+#include "objects/objectbase.h"
 #include "player.h"
 #include "screen.h"
 #include "items.h"
 #include "keys.h"
+#include "objects.h"
+#include "objects/droppeditemobject.h"
 
 class Controller : public QObject
 {
     Q_OBJECT
 public:
     Controller(QObject* parent  = nullptr);
-    void addObject(Object* obj);
-    void deleteObject(Object* obj);
+
+    void addObject(ObjectBase* obj);
+    void deleteObject(ObjectBase* obj);
+
     Player* player();
     void movePlayer(Keys key);
     void stopPlayer(Keys key);
-    Object* focusOn();
-    void setFocus(Object* obj);
+
     Screen* screen();
     void setScreen(Screen* scr);
-    void clearTrash();
+
+    ObjectBase* focusOn();
+    void setFocus(ObjectBase* obj);
+
     bool inventoryOpened() const;
     void buildHUD();
+
     void makeCurrentCell(int ind);
     void makeCurrentCell(Cell* ind);
+    void connectUsingItem(ItemBase* item);
+    void dropItem(ItemGroup* item, QPointF dir);
+
     void updatePlayerDiraction(QPoint dir);
     void updatePicked(QPointF pos);
-    void connectUsingItem(Item* item);
     void updateReleaseButton(Keys key);
+    void updatePlayerAction();
+    void clearTrash();
+    void generateChank(int x, int y);
+    void addLazyObject(ObjectBase*);
+    bool intersects(ObjectBase*);
+    void generateWorld();
 private:
     std::set<Object*> objects_;
+    std::set<Object*> lazyObjects_;
     std::set<Object*> objectTrash_;
     Player* player_;
     QTimer* timer;
-    Object* focusOn_;
+    ObjectBase* focusOn_;
     Screen* screen_ = nullptr;
     bool inventoryOpened_ = false;
     Keys lastKey;
     QPointF lastPress;
+    std::set<std::pair<int, int> > chank_;
+    int block_ = 500;
+    int seed_ = 14234;
+    std::pair<int, int> currentChank_ = {-1, -1};
 
 public slots:
     void updateClickHUD(QGraphicsItem* item, Keys key);

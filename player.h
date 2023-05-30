@@ -2,28 +2,15 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "object.h"
-#include "inventory.h"
+#include "playerbase.h"
+#include "objects/object.h"
 
-class Player : public Object
+
+class Player : public PlayerBase
 {
 public:
     Player(QObject* parent = nullptr);
-    QPointF& playerMovement();
-    QPointF& playerDirection();
-    void addPlayerMovement(QPointF move);
-    void setPlayerDirection(QPointF move);
-    QPointF normalize(QPointF dir);
-    void live() override;
-    void interactWithObject(Object*) override;
-    bool ableToMove = true;
-    Inventory* inventory();
-private:
-    QPointF playerMovement_;
-    QPointF playerDirection_;
-    double playerSpeed_ = 7;
-    Inventory* inventory_;
-
+    void interactWithObjectBody(Object* obj);
 };
 
 #endif // PLAYER_H

@@ -1,10 +1,14 @@
 
 #include "cell.h"
 
-Cell::Cell(Item* item, QRectF sz, QObject *parent)
+Cell::Cell(ItemGroup* item, QRectF sz, QObject *parent)
     : QObject{parent}, QGraphicsItem(), item_(item)
 {
     box_ = sz;
+}
+
+Cell::~Cell() {
+    delete item_;
 }
 
 QRectF& Cell::box() {
@@ -35,11 +39,11 @@ void Cell::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     painter->restore();
 }
 
-Item* Cell::item() {
+ItemGroup* Cell::item() {
     return item_;
 }
 
-void Cell::setItem(Item* item) {
+void Cell::setItem(ItemGroup* item) {
     item_ = item;
 }
 

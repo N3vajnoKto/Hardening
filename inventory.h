@@ -19,15 +19,15 @@ public:
     int y();
     void makeCurrent(Cell* cell);
     Cell* current();
-    Item* picked();
-    void setPicked(Item* item);
-    bool addItem(Item* item);
+    ItemGroup* picked();
+    void setPicked(ItemGroup* item);
+    bool addItem(ItemGroup* item);
     void rebuild();
 
 private:
     std::vector<Cell*> cells_;
     Cell* current_ = nullptr;
-    Item* picked_ = nullptr;
+    ItemGroup* picked_ = nullptr;
     int x_ = 5;
     int y_ = 5;
     int row_ = 10;
@@ -36,7 +36,7 @@ private:
     double scale = 1.15;
 
 signals:
-
+    void itemAdded(ItemBase* item);
 };
 
 #endif // INVENTORY_H

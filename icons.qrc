@@ -1,6 +1,9 @@
 <!DOCTYPE RCC><RCC version="1.0">
  <qresource>
      <file>icons/axe.png</file>
+     <file>icons/pickaxe.png</file>
      <file>icons/notImpl.png</file>
+     <file>icons/wood.png</file>
+     <file>icons/stone.png</file>
  </qresource>
  </RCC>
