@@ -22,7 +22,7 @@ ItemBase* ToolAxe::copy() const {
 
 bool ToolAxe::useItem(QPointF pos) {
     if (usable()) {
-        ObjectAxe* axe = new ObjectAxe(this);
+        ObjectAxe* axe = new ObjectAxe();
         axe->setPlayer(player());
         double ang = (turn ? 1 : -1);
         axe->setAngle(turn ? 0.1 : -0.1);

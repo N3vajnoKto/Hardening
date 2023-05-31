@@ -27,6 +27,7 @@ class LootableObject : public Object
 {
 public:
     LootableObject(QObject* parent = nullptr);
+    ~LootableObject();
     std::vector<SpawnOption>& loot();
     virtual void die() override;
 private:

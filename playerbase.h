@@ -17,6 +17,7 @@ public:
     QPointF normalize(QPointF dir);
     void live() override;
     void interactWithObject(ObjectBase*) override;
+    void getDamage(Damage damage) override;
     bool ableToMove = true;
     Inventory* inventory();
 private:

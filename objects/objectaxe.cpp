@@ -27,6 +27,7 @@ void ObjectAxe::interactWithObject(Object *obj) {
         return;
     }
 
+
     if (scenePath(useArea()).intersects(obj->scenePath(obj->hitbox())) && !damaged.count(obj)) {
         damaged.insert(obj);
         obj->getDamage(damage());

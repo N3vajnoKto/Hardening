@@ -56,6 +56,8 @@ set(PROJECT_SOURCES
 
         objects/objectaxe.h
         objects/objectaxe.cpp
+        objects/gameobject.h
+        objeccts/gameobject.cpp
 
         objects/toolobject.h
         objects/toolobject.cpp
@@ -92,17 +94,8 @@ set(PROJECT_SOURCES
         items/toolpickaxe.h
         items/toolpickaxe.cpp
 
-        objects/gameobject.h
-        objects/gameobject.cpp
-
         objects/objectpickaxe.h
         objects/objectpickaxe.cpp
-
-        objects/mob.h
-        objects/mob.cpp
-
-        objects/pig.h
-        objects/pig.cpp
 
         icons.qrc
 

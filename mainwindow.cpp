@@ -22,17 +22,6 @@ MainWindow::MainWindow(QWidget *parent)
     controller->setScreen(screen_);
     controller->buildHUD();
 
-    Tree* test = new Tree();
-
-    test->setPos(QPointF(250, 250) );
-    controller->addObject(test);
-
-    Stone* test1 = new Stone();
-//    test1->rotate(0.5);
-
-    test1->setPos(QPointF(-100, 180) );
-    controller->addObject(test1);
-
     controller->generateWorld();
 
 }

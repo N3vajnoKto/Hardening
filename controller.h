@@ -48,11 +48,14 @@ public:
     void generateChank(int x, int y);
     void addLazyObject(ObjectBase*);
     bool intersects(ObjectBase*);
+    void addMob(Mob*);
     void generateWorld();
+    void spawn();
 private:
     std::set<Object*> objects_;
+    std::set<Mob*> mobs_;
     std::set<Object*> lazyObjects_;
-    std::set<Object*> objectTrash_;
+    std::set<ObjectBase*> objectTrash_;
     Player* player_;
     QTimer* timer;
     ObjectBase* focusOn_;
@@ -61,7 +64,7 @@ private:
     Keys lastKey;
     QPointF lastPress;
     std::set<std::pair<int, int> > chank_;
-    int block_ = 500;
+    int block_ = 1000;
     int seed_ = 14234;
     std::pair<int, int> currentChank_ = {-1, -1};
 

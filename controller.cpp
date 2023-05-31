@@ -7,15 +7,13 @@ Controller::Controller(QObject* parent) : QObject(parent), player_(new Player(th
     connect(player_->inventory(), &Inventory::itemAdded, this, &Controller::connectUsingItem);
     ToolAxe* axe = new ToolAxe(this);
     ToolPickaxe* pickaxe = new ToolPickaxe(this);
-    connectUsingItem(axe);
-    connectUsingItem(pickaxe);
 
     Item* item1 = new Item();
     ItemGroup* it1 = new ItemGroup(item1);
     it1->setCount(10);
 
     Item* item2 = new Item();
-    ItemGroup* it2 = new ItemGroup(item1);
+    ItemGroup* it2 = new ItemGroup(item2);
     it2->setCount(14);
 
     player()->inventory()->addItem(it1);
@@ -36,18 +34,15 @@ Controller::Controller(QObject* parent) : QObject(parent), player_(new Player(th
 }
 
 void Controller::generateWorld() {
-    objects_.clear();
-    lazyObjects_.clear();
 
-    for (int i = -10; i < 10; ++i) {
-        for (int j = -10; j < 10; ++j) {
+    for (int i = -2; i < 2; ++i) {
+        for (int j = -2; j < 2; ++j) {
             generateChank(i, j);
         }
     }
 }
 
-void Controller::deleteObject(ObjectBase* obj) {
-    Object* object = dynamic_cast<Object*>(obj);
+void Controller::deleteObject(ObjectBase* object) {
     if (object != nullptr) {
         objectTrash_.insert(object);
     }
@@ -59,6 +54,14 @@ void Controller::addObject(ObjectBase* obj) {
     connect(object, &Object::objectAdded, this, &Controller::addObject);
     objects_.insert(object);
     screen_->addObject(object);
+}
+
+void Controller::addMob(Mob* mob) {
+    mob->setPlayer(player());
+    mobs_.insert(mob);
+    connect(mob, &Mob::objectDestroyed, this, &Controller::deleteObject);
+    connect(mob, &Mob::objectAdded, this, &Controller::addObject);
+    screen_->addObject(mob);
 }
 
 Player* Controller::player() {
@@ -202,6 +205,9 @@ void Controller::update() {
     for (Object* obj : objects_) {
         obj->live();
     }
+    for (Mob* mob : mobs_) {
+        mob->live();
+    }
 
     int xc = int(player()->pos().x()) / block_;
     int yc = int(player()->pos().y()) / block_;
@@ -212,6 +218,7 @@ void Controller::update() {
         generateChank(xc - 1, yc - 1);
         generateChank(xc + 1, yc + 1);
         generateChank(xc + 1, yc - 1);
+        generateChank(xc - 1, yc + 1);
         generateChank(xc, yc + 1);
         generateChank(xc, yc - 1);
         generateChank(xc + 1, yc);
@@ -246,8 +253,34 @@ void Controller::update() {
         }
     }
 
+    for (Mob* obj : mobs_) {
+        list = screen()->objectsNear(obj, obj->boundingRect());
+        for (auto to : list) {
+            ObjectBase* sobj = dynamic_cast<ObjectBase*>(to);
+            Object* object = dynamic_cast<Object*>(sobj);
+            if (obj == object) continue;
+            if (object == nullptr) continue;
+            obj->interactWithObjectBody(object);
+            obj->interactWithObject(object);
+        }
+    }
+
+    spawn();
+
     clearTrash();
     emit updated();
+}
+
+void Controller::spawn() {
+    if (mobs_.size() > 20) return;
+    std::mt19937 rnd(time(0));
+    if (rnd() % 1000 > 10) return;
+    QPointF dir(cos((rnd() % 1000)/ 1000.0), sin((rnd() % 1000)/ 1000.0));
+    QPointF ps = player()->pos() + dir * 300;
+    Pig* pig = new Pig();
+    pig->setPos(ps);
+    addMob(pig);
+
 }
 
 bool Controller::intersects(ObjectBase* obj) {
@@ -263,48 +296,49 @@ bool Controller::intersects(ObjectBase* obj) {
 }
 
 void Controller::generateChank(int x, int y) {
-    qDebug() << x << ' ' << y << ' ' << objects_.size();
-    if (chank_.count({x, y})) return;
+    if (chank_.count({x, y}) > 0) return;
     int seed = ((seed_ * x) % (abs(y) + 1)) * y - seed_ / (abs(x) + 1);
     std::mt19937 rnd(seed);
 
     int cnt = 5;
 
-    cnt += rnd() % 5;
+    cnt += rnd() % 10;
 
-    int xc = (x - 1) * block_;
-    int yc = (y - 1) * block_;
+    int xc = (x > 0 ? x : x - 1) * block_;
+    int yc = (y > 0 ? y : y - 1) * block_;
     int w = block_;
     int h = block_;
 
     if (x == 0) {
         w += block_;
+        cnt += 10;
     }
     if (y == 0) {
         h += block_;
+        cnt += 10;
     }
 
 
     for (int i = 0; i < cnt; ++i) {
         if ((rnd() % 1000) / 1000.0 < 0.7) {
             Tree* tree = new Tree();
-//            tree->setPos(xc + int(rnd() % w), yc + int(rnd() % h));
+            tree->setPos(xc + int(rnd() % w), yc + int(rnd() % h));
 
-//            while (intersects(tree)) {
-//                tree->setPos(xc + int(rnd() % w), yc + int(rnd() % h));
-//            }
+            while (intersects(tree)) {
+                tree->setPos(xc + int(rnd() % w), yc + int(rnd() % h));
+            }
 
-//            addLazyObject(tree);
+            addLazyObject(tree);
 
-//        } else {
-//            Stone* stone = new Stone(this);
-//            stone->setPos(xc + int(rnd() % w), yc + int(rnd() % h));
+        } else {
+            Stone* stone = new Stone(this);
+            stone->setPos(xc + int(rnd() % w), yc + int(rnd() % h));
 
-//            while (intersects(stone)) {
-//                stone->setPos(xc + int(rnd() % w), yc + int(rnd() % h));
-//            }
+            while (intersects(stone)) {
+                stone->setPos(xc + int(rnd() % w), yc + int(rnd() % h));
+            }
 
-//            addLazyObject(stone);
+            addLazyObject(stone);
         }
     }
 
@@ -423,20 +457,26 @@ void Controller::buildHUD() {
 
 void Controller::addLazyObject(ObjectBase* obj) {
     auto object = dynamic_cast<Object*>(obj);
-//    connect(object, &Object::objectDestroyed, this, &Controller::deleteObject);
-//    connect(object, &Object::objectAdded, this, &Controller::addObject);
+    connect(object, &Object::objectDestroyed, this, &Controller::deleteObject);
+    connect(object, &Object::objectAdded, this, &Controller::addObject);
     lazyObjects_.insert(object);
     screen_->addObject(object);
 }
 
 void Controller::clearTrash() {
     for (auto* to : objectTrash_) {
-        if (objects_.count(to)) {
-            objects_.erase(to);
+        Object* obj = dynamic_cast<Object*> (to);
+        if (objects_.count(obj)) {
+            objects_.erase(obj);
         }
-        if (lazyObjects_.count(to)) {
-            lazyObjects_.erase(to);
+        if (lazyObjects_.count(obj)) {
+            lazyObjects_.erase(obj);
         }
+        Mob* mob = dynamic_cast<Mob*> (to);
+        if (mobs_.count(mob)) {
+            mobs_.erase(mob);
+        }
+
         delete to;
     }
 

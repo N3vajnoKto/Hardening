@@ -10,7 +10,7 @@
 class ObjectAxe : public ToolObject
 {
 public:
-    explicit ObjectAxe(QObject* parent);
+    explicit ObjectAxe(QObject* parent = nullptr);
     QPointF dir_ = {0, 0};
     void live() override;
     void setAngle(double ang);

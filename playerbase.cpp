@@ -44,3 +44,11 @@ void PlayerBase::setPlayerDirection(QPointF dir) {
 
 void PlayerBase::interactWithObject(ObjectBase* obj) {
 }
+
+void PlayerBase::getDamage(Damage damage) {
+    health() -= damage.swordDamage();
+    if (health() <= 0) {
+        setPos(0,0);
+        health() = 100;
+    }
+}

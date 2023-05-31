@@ -7,12 +7,19 @@ LootableObject::LootableObject(QObject* parent) : Object(parent)
 
 }
 
+LootableObject::~LootableObject() {
+    for (auto to : loot_) {
+        delete to.item();
+    }
+}
+
 SpawnOption::SpawnOption(Item* item, int mn, int mx, double chance) {
     item_ = item;
     minimum_ = mn;
     maximum_ = mx;
     chance_ = chance;
 }
+
 
 std::vector<SpawnOption>& LootableObject::loot() {
     return loot_;
@@ -41,7 +48,7 @@ ItemGroup* SpawnOption::spawn() {
         res += rnd() % (maximum() - minimum());
     }
 
-    ItemGroup* it = new ItemGroup(item());
+    ItemGroup* it = new ItemGroup(item()->copy());
     it->setCount(std::min(item()->maxNumber(), res));
 
     return it;
