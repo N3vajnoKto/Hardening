@@ -107,6 +107,9 @@ set(PROJECT_SOURCES
         animationmanager.h
         animationmanager.cpp
 
+        items/meat.h
+        items/meat.cpp
+
         icons.qrc
 
 )

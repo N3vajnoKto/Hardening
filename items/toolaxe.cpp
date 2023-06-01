@@ -6,7 +6,7 @@ ToolAxe::ToolAxe(QObject *parent)
     : Tool{parent}
 {
     setId("simpleAxe");
-    setDamage(Damage(10, 0, 3));
+    setDamage(Damage(10, 0, 17));
     QPixmap pm;
     QPixmapCache::find("axe", &pm);
     setIcon(QIcon(pm));

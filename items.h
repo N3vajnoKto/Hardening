@@ -8,10 +8,12 @@
 #include "items/itemwood.h"
 #include "items/itemstone.h"
 #include "items/toolpickaxe.h"
+#include "items/meat.h"
 
 class ToolAxe;
 class ItemWood;
 class ItemStone;
 class ToolPickaxe;
+class Meat;
 
 #endif // ITEMS_H

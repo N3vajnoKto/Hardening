@@ -1,5 +1,6 @@
 
 #include "pig.h"
+#include "../items/meat.h"
 
 Pig::Pig(QObject* parent) : Mob(parent)
 {
@@ -10,6 +11,7 @@ Pig::Pig(QObject* parent) : Mob(parent)
     setDamage(Damage(0, 0, 12));
     setDestination(pos());
     setMobSpeed(2);
+    loot() = {SpawnOption(new Meat(), 1, 2, 0.9), SpawnOption(new Meat(), 1, 2, 0.5)};
 }
 
 void Pig::stopChilling() {

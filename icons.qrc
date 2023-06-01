@@ -10,5 +10,7 @@
         <file>icons/cobblestone.png</file>
         <file>icons/objectAxe.png</file>
         <file>icons/objectPickaxe.png</file>
+        <file>icons/meat.png</file>
+
     </qresource>
 </RCC>

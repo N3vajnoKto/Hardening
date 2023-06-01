@@ -57,6 +57,8 @@ void Controller::loadIcons() {
     QPixmapCache::insert("objectAxe", pm);
     pm.load(":/icons/objectPickaxe.png");
     QPixmapCache::insert("objectPickaxe", pm);
+    pm.load(":/icons/meat.png");
+    QPixmapCache::insert("meat", pm);
 }
 
 void Controller::generateWorld() {
