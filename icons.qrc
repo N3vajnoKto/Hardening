@@ -11,6 +11,8 @@
         <file>icons/objectAxe.png</file>
         <file>icons/objectPickaxe.png</file>
         <file>icons/meat.png</file>
+        <file>icons/pig.png</file>
+        <file>icons/player.png</file>
 
     </qresource>
 </RCC>

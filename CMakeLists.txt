@@ -92,9 +92,6 @@ set(PROJECT_SOURCES
         items/toolpickaxe.h
         items/toolpickaxe.cpp
 
-        objects/gameobject.h
-        objects/gameobject.cpp
-
         objects/objectpickaxe.h
         objects/objectpickaxe.cpp
 

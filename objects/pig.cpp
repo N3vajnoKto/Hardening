@@ -1,6 +1,7 @@
 
 #include "pig.h"
 #include "../items/meat.h"
+#include <QPixmapCache>
 
 Pig::Pig(QObject* parent) : Mob(parent)
 {
@@ -12,6 +13,52 @@ Pig::Pig(QObject* parent) : Mob(parent)
     setDestination(pos());
     setMobSpeed(2);
     loot() = {SpawnOption(new Meat(), 1, 2, 0.9), SpawnOption(new Meat(), 1, 2, 0.5)};
+
+    QPixmap pm;
+    QPixmapCache::find("pig", &pm);
+
+    int w = pm.width() / 3;
+    int h = pm.height() / 4;
+
+    animation.framesLeft().push_back(pm.copy(QRect(0, 3 * h, w, h)));
+    animation.framesLeft().push_back(pm.copy(QRect(w, 3 * h, w, h)));
+    animation.framesLeft().push_back(pm.copy(QRect(2 * w, 3 * h, w, h)));
+
+    animation.framesRight().push_back(pm.copy(QRect(0, h, w, h)));
+    animation.framesRight().push_back(pm.copy(QRect(w, h, w, h)));
+    animation.framesRight().push_back(pm.copy(QRect(2 * w, h, w, h)));
+
+    animation.current = animation.framesLeft()[0];
+    nextAnimation();
+}
+
+void Pig::nextAnimation() {
+    if (await_) {
+        if (direction().x() < 0) {
+            animation.current = animation.framesLeft()[1];
+        } else {
+            animation.current = animation.framesRight()[1];
+        }
+        animation.ind = 1;
+    } else {
+        animation.ind ++;
+        animation.ind %= animation.framesLeft().size();
+        if (direction().x() < 0) {
+            animation.current = animation.framesLeft()[animation.ind];
+        } else {
+            animation.current = animation.framesRight()[animation.ind];
+        }
+    }
+    QTimer::singleShot(100, this, &Pig::nextAnimation);
+}
+
+void Pig::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+    painter->save();
+
+    painter->drawPixmap(box().x() + 30, box().y(), animation.current);
+    painter->restore();
 }
 
 void Pig::stopChilling() {
@@ -41,6 +88,7 @@ void Pig::changeDestination() {
 }
 
 void Pig::live() {
+
     rotateToDestination();
 
     if (!isAgressive() && (dist(destination() - pos()) <= 100 || dist(destination() - pos()) >= 2000) ) {

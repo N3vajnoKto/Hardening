@@ -2,9 +2,10 @@
 #include "controller.h"
 #include <QPixmapCache>
 
-Controller::Controller(QObject* parent) : QObject(parent), player_(new Player(this))
+Controller::Controller(QObject* parent) : QObject(parent)
 {
     loadIcons();
+    player_ = new Player(this);
     focusOn_ = player_;
     connect(player_->inventory(), &Inventory::itemAdded, this, &Controller::connectUsingItem);
     ToolAxe* axe = new ToolAxe(this);
@@ -36,6 +37,7 @@ Controller::Controller(QObject* parent) : QObject(parent), player_(new Player(th
 }
 
 void Controller::loadIcons() {
+    QPixmapCache::setCacheLimit(100000);
     QPixmap pm;
     pm.load(":/icons/notImpl.png");
     QPixmapCache::insert("notImpl", pm);
@@ -45,8 +47,6 @@ void Controller::loadIcons() {
     QPixmapCache::insert("stone", pm);
     pm.load(":/icons/axe.png");
     QPixmapCache::insert("axe", pm);
-    pm.load(":/icons/pickaxe.png");
-    QPixmapCache::insert("pickaxe", pm);
     pm.load(":/icons/pickaxe.png");
     QPixmapCache::insert("pickaxe", pm);
     pm.load(":/icons/tree.png");
@@ -59,6 +59,16 @@ void Controller::loadIcons() {
     QPixmapCache::insert("objectPickaxe", pm);
     pm.load(":/icons/meat.png");
     QPixmapCache::insert("meat", pm);
+
+    pm.load(":/icons/pig.png");
+    pm = pm.scaled(pm.width() * 2, pm.height() * 2);
+    QPixmapCache::insert("pig", pm);
+
+    pm.load(":/icons/player.png");
+    pm = pm.scaled(pm.width() / 2, pm.height() / 2);
+    QPixmapCache::insert("player", pm);
+
+
 }
 
 void Controller::generateWorld() {

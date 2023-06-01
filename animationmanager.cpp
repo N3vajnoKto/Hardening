@@ -6,7 +6,14 @@ AnimationManager::AnimationManager()
 
 }
 
-std::vector<QPixmap>& AnimationManager::frames() {
-    return frames_;
+std::vector<QPixmap>& AnimationManager::framesLeft() {
+    return framesLeft_;
 }
 
+std::vector<QPixmap>& AnimationManager::framesRight() {
+    return framesRight_;
+}
+
+std::vector<QPixmap>& AnimationManager::staying() {
+    return staying_;
+}

@@ -6,7 +6,7 @@ ToolPickaxe::ToolPickaxe(QObject *parent)
     : Tool{parent}
 {
     setId("simplePickaxe");
-    setDamage(Damage(0, 10, 3));
+    setDamage(Damage(0, 10, 17));
     QPixmap pm;
     QPixmapCache::find("pickaxe", &pm);
     setIcon(QIcon(pm));
