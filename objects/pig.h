@@ -15,8 +15,12 @@ public:
     void getDamage(Damage damage) override;
     void interactWithObject(Object *obj) override;
     void interactWithPlayer(PlayerBase *obj) override;
+    void calm();
+    void changeDestination();
+    void stopChilling();
 private:
     bool await_ = false;
+    bool chill_ = false;
 };
 
 #endif // PIG_H

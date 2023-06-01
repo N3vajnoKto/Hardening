@@ -13,6 +13,7 @@ Screen::Screen(QWidget *parent)
     sceneView_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     sceneView_->setDragMode(QGraphicsView::NoDrag);
     sceneView_->setFocusPolicy(Qt::NoFocus);
+    sceneView_->setCacheMode(QGraphicsView::CacheBackground);
 
 
     hudView_->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
@@ -34,6 +35,11 @@ Screen::Screen(QWidget *parent)
     pal.setColor(QPalette::Base, Qt::transparent);
     hudView_->setAutoFillBackground(true);
     hudView_->setPalette(pal);
+
+    QPixmap bg;
+    bg.load(":/icons/grass.png");
+    bg = bg.scaled(128, 128);
+    scene_->setBackgroundBrush(bg);
 
     setMouseTracking(true);
 

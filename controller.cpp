@@ -1,8 +1,10 @@
 
 #include "controller.h"
+#include <QPixmapCache>
 
 Controller::Controller(QObject* parent) : QObject(parent), player_(new Player(this))
 {
+    loadIcons();
     focusOn_ = player_;
     connect(player_->inventory(), &Inventory::itemAdded, this, &Controller::connectUsingItem);
     ToolAxe* axe = new ToolAxe(this);
@@ -33,6 +35,30 @@ Controller::Controller(QObject* parent) : QObject(parent), player_(new Player(th
 
 }
 
+void Controller::loadIcons() {
+    QPixmap pm;
+    pm.load(":/icons/notImpl.png");
+    QPixmapCache::insert("notImpl", pm);
+    pm.load(":/icons/wood.png");
+    QPixmapCache::insert("wood", pm);
+    pm.load(":/icons/stone.png");
+    QPixmapCache::insert("stone", pm);
+    pm.load(":/icons/axe.png");
+    QPixmapCache::insert("axe", pm);
+    pm.load(":/icons/pickaxe.png");
+    QPixmapCache::insert("pickaxe", pm);
+    pm.load(":/icons/pickaxe.png");
+    QPixmapCache::insert("pickaxe", pm);
+    pm.load(":/icons/tree.png");
+    QPixmapCache::insert("tree", pm.scaled(200, 200));
+    pm.load(":/icons/cobblestone.png");
+    QPixmapCache::insert("cobblestone", pm.scaled(200, 200));
+    pm.load(":/icons/objectAxe.png");
+    QPixmapCache::insert("objectAxe", pm);
+    pm.load(":/icons/objectPickaxe.png");
+    QPixmapCache::insert("objectPickaxe", pm);
+}
+
 void Controller::generateWorld() {
 
     for (int i = -2; i < 2; ++i) {
@@ -40,6 +66,7 @@ void Controller::generateWorld() {
             generateChank(i, j);
         }
     }
+    spawn();
 }
 
 void Controller::deleteObject(ObjectBase* object) {
@@ -50,6 +77,7 @@ void Controller::deleteObject(ObjectBase* object) {
 
 void Controller::addObject(ObjectBase* obj) {
     auto object = dynamic_cast<Object*>(obj);
+    object->setZValue(int(object->y()));
     connect(object, &Object::objectDestroyed, this, &Controller::deleteObject);
     connect(object, &Object::objectAdded, this, &Controller::addObject);
     objects_.insert(object);
@@ -58,6 +86,7 @@ void Controller::addObject(ObjectBase* obj) {
 
 void Controller::addMob(Mob* mob) {
     mob->setPlayer(player());
+    mob->setZValue(int(mob->y()));
     mobs_.insert(mob);
     connect(mob, &Mob::objectDestroyed, this, &Controller::deleteObject);
     connect(mob, &Mob::objectAdded, this, &Controller::addObject);
@@ -68,8 +97,17 @@ Player* Controller::player() {
     return player_;
 }
 
+void Controller::removeItem(ItemBase* item) {
+    if (items_.count(item)) {
+        items_.erase(item);
+    }
+}
+
 void Controller::connectUsingItem(ItemBase* item) {
+    if (items_.count(item)) return;
     connect(item, &ItemBase::addObject, this, &Controller::addObject);
+    connect(item, &ItemBase::itemDestroyed, this, &Controller::removeItem);
+    items_.insert(item);
 }
 
 void Controller::updatePicked(QPointF pos) {
@@ -234,11 +272,22 @@ void Controller::update() {
         auto self = dynamic_cast<Player*>(to);
         if (self == player()) continue;
         auto object = dynamic_cast<Object*>(obj);
-        if (object == nullptr) continue;
-        object->interactWithPlayer(player());
-        if (object->isInteractive()) {
+        auto mob = dynamic_cast<Mob*>(obj);
+        if (object != nullptr) {
             player()->interactWithObjectBody(object);
+            object->interactWithPlayerBody(player());
+            if (object->isInteractive()) {
+                object->interactWithPlayer(player());
+            }
         }
+
+        if (mob != nullptr) {
+            mob->interactWithPlayerBody(player());
+            if (mob->isInteractive()) {
+                mob->interactWithPlayer(player());
+            }
+        }
+
     }
 
     for (Object* obj : objects_) {
@@ -265,18 +314,17 @@ void Controller::update() {
         }
     }
 
-    spawn();
-
     clearTrash();
     emit updated();
 }
 
 void Controller::spawn() {
-    if (mobs_.size() > 20) return;
+    QTimer::singleShot(2000, this, &Controller::spawn);
+    if (mobs_.size() > 10) return;
     std::mt19937 rnd(time(0));
-    if (rnd() % 1000 > 10) return;
+    if (rnd() % 1000 > 300) return;
     QPointF dir(cos((rnd() % 1000)/ 1000.0), sin((rnd() % 1000)/ 1000.0));
-    QPointF ps = player()->pos() + dir * 300;
+    QPointF ps = player()->pos() + dir * 1400;
     Pig* pig = new Pig();
     pig->setPos(ps);
     addMob(pig);
@@ -457,6 +505,7 @@ void Controller::buildHUD() {
 
 void Controller::addLazyObject(ObjectBase* obj) {
     auto object = dynamic_cast<Object*>(obj);
+    object->setZValue(int(object->y()));
     connect(object, &Object::objectDestroyed, this, &Controller::deleteObject);
     connect(object, &Object::objectAdded, this, &Controller::addObject);
     lazyObjects_.insert(object);

@@ -4,7 +4,7 @@
 ObjectBase::ObjectBase(QObject* parent) : QObject(parent), QGraphicsItem()
 {
     box_ = {-40, -40, 80, 80};
-    body_ = {{-20, -20}, {20, -20}, {0, 20}};
+    body_ = {{-20, -20}, {20, -20}, {20, 20}, {-20, 20}};
     hitbox_ = {{-20, -40}, {20, -40}, {20, 20}, {-20, 20}};
     double angle = 0;
 
@@ -84,6 +84,7 @@ QRectF ObjectBase::boundingRect() const {
 
 void ObjectBase::move(QPointF move) {
     setPos(pos() + move);
+    setZValue(int(y()));
 }
 
 void ObjectBase::addSpeed(QPointF move) {
@@ -200,7 +201,6 @@ void ObjectBase::rotate(double ang) {
 }
 
 void ObjectBase::interactWithObjectBody(ObjectBase* obj) {
-    qDebug() << scenePath(body());
     if (scenePath(body()).intersects(obj->scenePath(obj->body()))) {
         if (isSolid() && obj->isSolid() && movePrior() <= obj->movePrior()) {
             double l = 0;

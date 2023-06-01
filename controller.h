@@ -51,11 +51,14 @@ public:
     void addMob(Mob*);
     void generateWorld();
     void spawn();
+    void removeItem(ItemBase* item);
+    void loadIcons();
 private:
     std::set<Object*> objects_;
     std::set<Mob*> mobs_;
     std::set<Object*> lazyObjects_;
     std::set<ObjectBase*> objectTrash_;
+    std::set<ItemBase*> items_;
     Player* player_;
     QTimer* timer;
     ObjectBase* focusOn_;

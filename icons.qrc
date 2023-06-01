@@ -1,9 +1,14 @@
-<!DOCTYPE RCC><RCC version="1.0">
- <qresource>
-     <file>icons/axe.png</file>
-     <file>icons/pickaxe.png</file>
-     <file>icons/notImpl.png</file>
-     <file>icons/wood.png</file>
-     <file>icons/stone.png</file>
- </qresource>
- </RCC>
+<RCC>
+    <qresource prefix="/">
+        <file>icons/axe.png</file>
+        <file>icons/pickaxe.png</file>
+        <file>icons/notImpl.png</file>
+        <file>icons/wood.png</file>
+        <file>icons/stone.png</file>
+        <file>icons/grass.png</file>
+        <file>icons/tree.png</file>
+        <file>icons/cobblestone.png</file>
+        <file>icons/objectAxe.png</file>
+        <file>icons/objectPickaxe.png</file>
+    </qresource>
+</RCC>

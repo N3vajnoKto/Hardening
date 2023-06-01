@@ -5,7 +5,9 @@ ItemWood::ItemWood(QObject* parent) : Item(parent)
 {
     setAutouse(true);
     setDisposable(true);
-    setIcon(QIcon(":/icons/wood.png"));
+    QPixmap pm;
+    QPixmapCache::find("wood", &pm);
+    setIcon(QIcon(pm));
     setId("wood");
 }
 

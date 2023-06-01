@@ -104,6 +104,9 @@ set(PROJECT_SOURCES
         objects/pig.h
         objects/pig.cpp
 
+        animationmanager.h
+        animationmanager.cpp
+
         icons.qrc
 
 )

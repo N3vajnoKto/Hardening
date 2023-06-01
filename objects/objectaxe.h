@@ -16,6 +16,9 @@ public:
     void setAngle(double ang);
     void interactWithObject(Object *obj) override;
     void interactWithObject(ObjectBase *obj) override;
+    void move(QPointF dir) override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    QPixmap look_;
 private:
     std::set<ObjectBase*> damaged;
     double ang_ = 0.1;

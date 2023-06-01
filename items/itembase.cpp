@@ -1,12 +1,19 @@
 
 #include "itembase.h"
 
-ItemBase::ItemBase(QObject *parent, QIcon icon)
+ItemBase::ItemBase(QObject *parent, const QIcon& icon)
     : QObject{parent}
 {
     icon_ = icon;
     box_ = {0, 0, 30, 30};
 }
+
+ItemBase::ItemBase(QObject *parent) {
+    QPixmap pm;
+    QPixmapCache::find("notImpl", &pm);
+    icon_ = QIcon(pm);
+}
+
 
 ItemBase::ItemBase(const ItemBase *parent) {
     box_ = parent->box_;
@@ -15,6 +22,10 @@ ItemBase::ItemBase(const ItemBase *parent) {
     autouse_ = parent->autouse_;
     disposable_ = parent->disposable_;
     maxNumber_ = parent->maxNumber_;
+}
+
+ItemBase::~ItemBase() {
+    emit itemDestroyed(this);
 }
 
 ItemBase* ItemBase::copy() const {
@@ -26,7 +37,7 @@ QIcon ItemBase::icon() const {
     return icon_;
 }
 
-void ItemBase::setIcon(QIcon icon) {
+void ItemBase::setIcon(const QIcon& icon) {
     icon_ = icon;
 }
 
@@ -43,7 +54,7 @@ QPixmap ItemBase::pixmap(int w, int h, int cnt) const {
         w = box_.width();
         h = box_.height();
     }
-    QPixmap pix = icon().pixmap(w, h);
+    QPixmap pix = icon_.pixmap(w, h);
     QPainter painter(&pix);
     if (cnt > 1) {
         painter.setFont(QFont("Arial", 10, 2));

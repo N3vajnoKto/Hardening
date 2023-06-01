@@ -19,6 +19,7 @@ public:
     void interactWithObject(ObjectBase*) override;
     void getDamage(Damage damage) override;
     bool ableToMove = true;
+    void makeMortal();
     Inventory* inventory();
 private:
     QPointF playerMovement_;

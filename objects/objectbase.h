@@ -31,7 +31,7 @@ public:
     std::vector<QPointF>& useArea();
     QPainterPath path(const std::vector<QPointF>& vec) const;
     QPainterPath scenePath(const std::vector<QPointF>& vec) const;
-    void move(QPointF move);
+    virtual void move(QPointF move);
     void addSpeed(QPointF move);
     void addDirect(QPointF move);
     void setSolid(bool bl);

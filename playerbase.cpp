@@ -1,5 +1,6 @@
 
 #include "playerbase.h"
+#include <QTimer>
 
 PlayerBase::PlayerBase(QObject* parent) : ObjectBase(parent), playerMovement_{0, 0}, inventory_(new Inventory(30, 10, this))
 {
@@ -27,7 +28,12 @@ QPointF PlayerBase::normalize(QPointF dir) {
     return dir;
 }
 
+void PlayerBase::makeMortal() {
+    setImortal(false);
+}
+
 void PlayerBase::live() {
+    speed() *= 0.7;
     move(speed());
     if (ableToMove) {
         move(playerSpeed_ * normalize(playerMovement_));
@@ -46,9 +52,13 @@ void PlayerBase::interactWithObject(ObjectBase* obj) {
 }
 
 void PlayerBase::getDamage(Damage damage) {
+    if (isImortal()) return;
     health() -= damage.swordDamage();
+    setImortal(true);
+
     if (health() <= 0) {
         setPos(0,0);
         health() = 100;
     }
+    QTimer::singleShot(1000, this, &PlayerBase::makeMortal);
 }

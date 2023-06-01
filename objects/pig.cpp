@@ -9,21 +9,44 @@ Pig::Pig(QObject* parent) : Mob(parent)
     useArea() = {{-60, -35}, {60, -35}, {60, 35}, {-60, 35}};
     setDamage(Damage(0, 0, 12));
     setDestination(pos());
-    setMobSpeed(5);
+    setMobSpeed(2);
+}
+
+void Pig::stopChilling() {
+    chill_ = false;
+}
+
+void Pig::calm() {
+    setAgressive(false);
+    setMobSpeed(2);
+}
+
+void Pig::changeDestination() {
+    if (isAgressive()) return;
+    std::mt19937 rnd(time(0));
+    wait(rnd() % 3000);
+    if (chill_) {
+        QPointF dest = QPointF(cos(rnd() % 300 / 100), sin(rnd() % 300 / 100));
+        setDestination(pos() + dest * (100 + rnd() % 100));
+    } else {
+        chill_ = true;
+        QPointF dest = QPointF(cos(rnd() % 300 / 100), sin(rnd() % 300 / 100));
+        setDestination(pos() + dest * (300 + rnd() % 300));
+    }
+
+    QTimer::singleShot(5000, this, &Pig::stopChilling);
+    QTimer::singleShot(10000, this, &Pig::changeDestination);
 }
 
 void Pig::live() {
-    std::mt19937 rnd(time(0));
     rotateToDestination();
-    if (!isAgressive()) {
-        if (dist(destination()) <= 30) {
-            wait();
-            QPointF dest = QPointF(cos(rnd() % 500 / 100), sin(rnd() % 500 / 100));
-            setDestination(pos() + dest * (100 + rnd() % 200));
-        }
+
+    if (!isAgressive() && (dist(destination() - pos()) <= 100 || dist(destination() - pos()) >= 2000) ) {
+        changeDestination();
     }
 
     move(speed());
+    speed() *= 0.7;
     if (!await_) {
         move(direction() * mobSpeed());
     }
@@ -36,20 +59,27 @@ void Pig::live() {
         destroyObject();
     }
 
+    if (dist(player()) >= 1500) {
+        calm();
+    }
+
 }
 
 void Pig::interactWithObject(Object *obj) {
-    if (isAgressive()) {
-        if (scenePath(useArea()).intersects(obj->scenePath(obj->hitbox()))) {
-            obj->getDamage(damage());
-        }
-    }
+//    if (isAgressive()) {
+//        if (scenePath(useArea()).intersects(obj->scenePath(obj->hitbox()))) {
+//            obj->getDamage(damage());
+//        }
+//    }
 }
 
 void Pig::interactWithPlayer(PlayerBase *obj) {
     if (isAgressive()) {
         if (scenePath(useArea()).intersects(obj->scenePath(obj->hitbox()))) {
             obj->getDamage(damage());
+            QPointF dir = normalize(obj->pos() - pos());
+
+            obj->speed() += dir * 30;
         }
     }
 }
@@ -57,6 +87,8 @@ void Pig::interactWithPlayer(PlayerBase *obj) {
 void Pig::getDamage(Damage damage) {
     health() -= damage.swordDamage();
     setAgressive(true);
+    setMobSpeed(5);
+    start();
     if (health() <= 0) {
         die();
     }

@@ -25,6 +25,7 @@ public:
     bool isAgressive() const;
     void setAgressive(bool bl);
     virtual void getDamage(Damage damage) override;
+    virtual void interactWithPlayerBody(PlayerBase* player);
 private:
     Player* player_ = nullptr;
     bool agressive_ = false;

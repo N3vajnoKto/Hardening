@@ -10,6 +10,7 @@ DroppedItemObject::DroppedItemObject(ItemGroup* item, QObject* parent) : Object(
     useArea() = body();
     hitbox() = body();
     setSolid(true);
+    setSolidWithPlayer(false);
     setInteractive(false);
     setMovePrior(-1000);
     QTimer::singleShot(1000, this, &DroppedItemObject::makeInteractive);

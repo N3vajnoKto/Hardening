@@ -31,7 +31,7 @@ void Object::interactWithPlayer(PlayerBase* player) {
 }
 
 void Object::interactWithPlayerBody(PlayerBase* player) {
-    if (collidesWithItem(player)) {
+    if (scenePath(body()).intersects(player->scenePath(player->body()))) {
         if (isSolidWithPlayer() && movePrior() <= player->movePrior()) {
             double l = 0;
             double r = std::max(box().width(), box().height());
@@ -39,7 +39,7 @@ void Object::interactWithPlayerBody(PlayerBase* player) {
             for (int i = 0; i < 5; ++i) {
                 double sr = (l + r) / 2;
                 move(sr * dir);
-                if (collidesWithItem(player)) {
+                if (scenePath(body()).intersects(player->scenePath(player->body()))) {
                     l = sr;
                 } else {
                     r = sr;

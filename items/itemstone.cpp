@@ -5,7 +5,9 @@ ItemStone::ItemStone(QObject* parent) : Item(parent)
 {
     setAutouse(true);
     setDisposable(true);
-    setIcon(QIcon(":/icons/stone.png"));
+    QPixmap pm;
+    QPixmapCache::find("stone", &pm);
+    setIcon(QIcon(pm));
     setId("stone");
 }
 

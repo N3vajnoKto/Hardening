@@ -5,8 +5,9 @@
 #include <QObject>
 #include <QGraphicsItem>
 #include <QPainter>
-#include <QIcon>
 #include <QPixmap>
+#include <QPixmapCache>
+#include <QIcon>
 
 #include "../objects/objectbase.h"
 
@@ -14,10 +15,12 @@ class ItemBase : public QObject
 {
     Q_OBJECT
 public:
-    explicit ItemBase(QObject *parent = nullptr, QIcon icon = QIcon(":/icons/notImpl.png"));
+    explicit ItemBase(QObject *parent, const QIcon& icon);
+    explicit ItemBase(QObject *parent = nullptr);
     explicit ItemBase(const ItemBase *parent);
+    ~ItemBase();
     QIcon icon() const;
-    void setIcon(QIcon icon);
+    void setIcon(const QIcon& icon);
     void setId(QString str);
     bool autouse();
     void setAutouse(bool bl);
@@ -40,6 +43,7 @@ private:
 
 signals:
     void addObject(ObjectBase* obj);
+    void itemDestroyed(ItemBase* item);
 
 };
 
