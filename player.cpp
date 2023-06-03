@@ -53,7 +53,6 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 
     painter->drawPixmap(box().x() + 10, box().y(), animation.current);
-    painter->drawPath(path(hitbox()));
 
     painter->restore();
 }
